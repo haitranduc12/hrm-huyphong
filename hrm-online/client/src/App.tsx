@@ -181,8 +181,6 @@ function AppRoutes() {
       <Route path="/admin/training" element={admin('training', <AdminTraining />)} />
       <Route path="/admin/recruitment" element={adminAny(['users', 'projects'], <AdminRecruitment />)} />
       <Route path="/admin/workforce" element={admin('users', <AdminWorkforceCenter section="workers" />, { functionCode: 'admin.workforce' })} />
-      <Route path="/admin/recruitment-orders" element={admin('users', <AdminWorkforceCenter section="orders" />, { functionCode: 'admin.recruitment_orders' })} />
-      <Route path="/admin/workforce-partners" element={admin('users', <AdminWorkforceCenter section="partners" />, { functionCode: 'admin.workforce_partners' })} />
       <Route path="/admin/worker-documents" element={admin('users', <AdminWorkforceCenter section="documents" />, { functionCode: 'admin.worker_documents' })} />
       <Route path="/admin/employee-lifecycle" element={admin('users', <AdminNexusCenter section="lifecycle" />, { functionCode: 'admin.employee_lifecycle' })} />
       <Route path="/admin/performance" element={admin('reports', <AdminNexusCenter section="performance" />, { functionCode: 'admin.performance_manage' })} />

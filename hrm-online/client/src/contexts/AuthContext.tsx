@@ -62,8 +62,6 @@ const DEMO_PROFILES: Record<string, Profile> = {
     function_permissions: [
       'admin.overview',
       'admin.workforce',
-      'admin.recruitment_orders',
-      'admin.workforce_partners',
       'admin.worker_documents',
       'admin.employee_lifecycle',
       'admin.performance_manage',

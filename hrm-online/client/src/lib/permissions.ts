@@ -17,8 +17,7 @@ export type AdminPermission = (typeof ADMIN_PERMISSIONS)[number];
 
 /** Quyền chức năng nhạy cảm có thể cấp riêng cho vai trò/vị trí. */
 export const ADMIN_FUNCTION_CODES = [
-  'admin.overview', 'admin.employee_lifecycle', 'admin.recruitment_orders',
-  'admin.workforce_partners', 'admin.workforce', 'admin.worker_documents',
+  'admin.overview', 'admin.employee_lifecycle', 'admin.workforce', 'admin.worker_documents',
   'admin.attendance_settings', 'admin.work_locations', 'admin.payroll',
   'admin.timesheet_lock', 'admin.performance_manage', 'admin.feature_flags', 'admin.audit',
 ] as const;
@@ -27,8 +26,6 @@ export type AdminFunctionCode = (typeof ADMIN_FUNCTION_CODES)[number];
 export const ADMIN_FUNCTIONS: Record<AdminFunctionCode, { label: string; description: string; module: AdminPermission }> = {
   'admin.overview': { label: 'Tổng quan điều hành', description: 'Xem dashboard điều hành và cảnh báo toàn công ty.', module: 'reports' },
   'admin.employee_lifecycle': { label: 'Hội nhập & nghỉ việc', description: 'Quản lý checklist onboarding/offboarding.', module: 'users' },
-  'admin.recruitment_orders': { label: 'Đơn hàng cung ứng', description: 'Theo dõi chỉ tiêu và tiến độ cung ứng lao động.', module: 'users' },
-  'admin.workforce_partners': { label: 'Đối tác tuyển dụng', description: 'Quản lý doanh nghiệp tiếp nhận và đơn vị liên kết.', module: 'users' },
   'admin.workforce': { label: 'Hồ sơ người lao động', description: 'Quản lý hồ sơ và tiến trình tuyển chọn.', module: 'users' },
   'admin.worker_documents': { label: 'Hồ sơ giấy tờ lao động', description: 'Theo dõi hợp đồng, visa và tài liệu.', module: 'users' },
   'admin.attendance_settings': { label: 'Thiết lập công & chấm công', description: 'Cấu hình giờ chuẩn và quy tắc thời gian.', module: 'attendance' },
@@ -66,8 +63,6 @@ export const PERMISSION_FUNCTIONS: Record<AdminPermission, { label: string; admi
     { label: 'Tuyển dụng nội bộ' },
     { label: 'Hội nhập & nghỉ việc', functionCode: 'admin.employee_lifecycle' },
     { label: 'Hồ sơ người lao động', functionCode: 'admin.workforce' },
-    { label: 'Đơn hàng cung ứng', functionCode: 'admin.recruitment_orders' },
-    { label: 'Đối tác tuyển dụng', functionCode: 'admin.workforce_partners' },
     { label: 'Hồ sơ giấy tờ lao động', functionCode: 'admin.worker_documents' },
   ],
   projects: [
