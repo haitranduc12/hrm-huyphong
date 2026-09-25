@@ -176,7 +176,6 @@ function AppRoutes() {
           isFullAdmin — lead có quyền chấm công vào chỉ thấy thông báo khóa.
           RLS phía database mới là hàng rào thật. */}
       <Route path="/admin/payroll" element={admin('attendance', <AdminPayroll />, { functionCode: 'admin.payroll' })} />
-      <Route path="/admin/shifts" element={admin('shifts', <AdminShifts />)} />
       <Route path="/admin/leave" element={admin('leave', <AdminLeave />)} />
       <Route path="/admin/training" element={admin('training', <AdminTraining />)} />
       <Route path="/admin/recruitment" element={adminAny(['users', 'projects'], <AdminRecruitment />)} />
@@ -200,7 +199,6 @@ function AppRoutes() {
       <Route path="/staff/projects" element={staff(<StaffProjects />)} />
       <Route path="/staff/kanban" element={staff(<StaffKanban />)} />
       <Route path="/staff/attendance" element={staff(<StaffAttendance />)} />
-      <Route path="/staff/shifts" element={staff(<StaffShifts />)} />
       <Route path="/staff/leave" element={staff(<StaffLeave />)} />
       <Route path="/staff/worklog" element={staff(<StaffWorklog />)} />
       <Route path="/staff/reports" element={staff(<StaffReports />)} />

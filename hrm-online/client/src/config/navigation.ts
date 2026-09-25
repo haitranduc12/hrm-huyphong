@@ -43,7 +43,6 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   { to: '/admin/assignments', label: 'Giao việc hằng ngày', description: 'Phân công và xác nhận kết quả công việc trong ngày', icon: ClipboardList, permission: 'attendance', group: 'Công việc & Dự án', keywords: 'giao viec phan cong xac nhan' },
   { to: '/admin/worklog', label: 'Nhật ký giờ', description: 'Đối chiếu thời gian thực tế theo người và tác vụ', icon: NotebookPen, permission: 'reports', group: 'Công việc & Dự án', keywords: 'gio cong worklog timesheet' },
 
-  { to: '/admin/shifts', label: 'Lịch & ca làm', description: 'Phân ca, duyệt đăng ký và đối chiếu hiện diện', icon: CalendarDays, permission: 'shifts', group: 'Thời gian & Nghỉ phép', keywords: 'lich ca lam' },
   { to: '/admin/attendance-settings', label: 'Thiết lập công & chấm công', description: 'Giờ chuẩn và hạn mức mặc định cho thời gian, nghỉ phép', icon: SlidersHorizontal, permission: 'attendance', group: 'Thời gian & Nghỉ phép', keywords: 'cau hinh cong cham cong gio chuan phep nam', functionCode: 'admin.attendance_settings' },
   { to: '/admin/work-locations', label: 'Điểm chấm công', description: 'Địa điểm GPS, bán kính và WiFi văn phòng', icon: MapPinned, permission: 'settings', group: 'Thời gian & Nghỉ phép', keywords: 'gps wifi bssid dia diem', functionCode: 'admin.work_locations' },
   { to: '/admin/attendance', label: 'Duyệt chấm công', description: 'Kiểm tra check-in, check-out và xác nhận ngày công', icon: Clock, permission: 'attendance', group: 'Thời gian & Nghỉ phép', keywords: 'check in out ngay cong' },

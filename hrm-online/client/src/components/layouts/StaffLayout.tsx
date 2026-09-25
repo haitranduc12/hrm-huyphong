@@ -22,7 +22,6 @@ const navItems = [
   { to: '/staff/kanban', label: 'Tác vụ Kanban', description: 'Theo dõi và cập nhật trạng thái tác vụ', icon: KanbanSquare, group: 'Công việc' },
   { to: '/staff/worklog', label: 'Nhật ký giờ', description: 'Ghi nhận thời gian thực tế cho từng công việc', icon: NotebookPen, group: 'Công việc' },
 
-  { to: '/staff/shifts', label: 'Ca làm việc', description: 'Xem lịch và gửi đăng ký ca', icon: CalendarDays, group: 'Thời gian & Lịch' },
   { to: '/staff/attendance', label: 'Chấm công', description: 'Check-in, hoàn thành việc và check-out', icon: Fingerprint, group: 'Thời gian & Lịch' },
   { to: '/staff/leave', label: 'Nghỉ phép', description: 'Theo dõi quỹ phép và gửi yêu cầu nghỉ', icon: CalendarOff, group: 'Thời gian & Lịch' },
 
