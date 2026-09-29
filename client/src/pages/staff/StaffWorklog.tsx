@@ -12,9 +12,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 import { supabase } from '@/lib/supabase';
 import {
-  UNLOGGED_TOLERANCE_HOURS, attendanceHours, fetchDayEntries, formatHours, saveDayEntries, type WorklogEntry,
+  addDays, UNLOGGED_TOLERANCE_HOURS, attendanceHours, fetchDayEntries, formatHours, saveDayEntries, type WorklogEntry,
 } from '@/lib/worklog';
-import { addDays } from '@/lib/shifts';
 import { getTodayString, toDateString } from '@/lib/utils';
 import type { Attendance } from '@/types';
 

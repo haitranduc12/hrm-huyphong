@@ -35,7 +35,7 @@ import {
 } from '@/lib/portfolio';
 import type { Project, Profile, ProjectMember, Task, ProjectEvent } from '@/types';
 
-interface Pending { leave: number; shifts: number; assignments: number }
+interface Pending { leave: number; assignments: number }
 
 export function AdminOverview() {
   const navigate = useNavigate();
@@ -49,18 +49,17 @@ export function AdminOverview() {
   const [members, setMembers] = useState<ProjectMember[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [events, setEvents] = useState<ProjectEvent[]>([]);
-  const [pending, setPending] = useState<Pending>({ leave: 0, shifts: 0, assignments: 0 });
+  const [pending, setPending] = useState<Pending>({ leave: 0, assignments: 0 });
 
   const load = async (silent = false) => {
     if (!silent) setLoading(true);
-    const [projRes, taskRes, memRes, profRes, evRes, lvRes, shRes, asgRes] = await Promise.all([
+    const [projRes, taskRes, memRes, profRes, evRes, lvRes, asgRes] = await Promise.all([
       supabase.from('projects').select('*'),
       supabase.from('tasks').select('id, project_id, status, due_date, priority'),
       supabase.from('project_members').select('id, project_id, user_id, role'),
       supabase.from('profiles').select('*').eq('is_active', true),
       supabase.from('project_events').select('*, project:projects(id,name)').gte('start_at', new Date().toISOString()).order('start_at', { ascending: true }),
       supabase.from('leave_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('shifts').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       supabase.from('daily_assignments').select('id', { count: 'exact', head: true }).eq('status', 'submitted'),
     ]);
 
@@ -72,7 +71,7 @@ export function AdminOverview() {
     setMembers((memRes.data || []) as ProjectMember[]);
     setProfiles((profRes.data || []) as Profile[]);
     setEvents((evRes.data || []) as ProjectEvent[]);
-    setPending({ leave: lvRes.count ?? 0, shifts: shRes.count ?? 0, assignments: asgRes.count ?? 0 });
+    setPending({ leave: lvRes.count ?? 0, assignments: asgRes.count ?? 0 });
     setLoading(false);
   };
 
@@ -84,7 +83,6 @@ export function AdminOverview() {
       { table: 'tasks' },
       { table: 'project_events' },
       { table: 'leave_requests' },
-      { table: 'shifts' },
       { table: 'daily_assignments' },
     ],
     () => load(true),
@@ -102,7 +100,7 @@ export function AdminOverview() {
   const live = portfolio.filter((ph) => isLiveProject(ph.project));
   const needAttention = live.filter((ph) => ph.health !== 'good').length;
   const overdueTasksTotal = live.reduce((s, ph) => s + ph.overdueTasks, 0);
-  const pendingTotal = pending.leave + pending.shifts + pending.assignments;
+  const pendingTotal = pending.leave + pending.assignments;
 
   // Phân bố sức khỏe cho donut.
   const healthDist = useMemo(() => {
@@ -232,7 +230,6 @@ export function AdminOverview() {
                 <div className="px-5 py-3 border-b border-slate-50 flex flex-wrap gap-x-4 gap-y-1.5">
                   {pending.assignments > 0 && <PendingChip icon={<ShieldCheck className="w-3.5 h-3.5" />} label={`${pending.assignments} việc chờ xác nhận`} to="/admin/assignments" navigate={navigate} />}
                   {pending.leave > 0 && <PendingChip icon={<CalendarOff className="w-3.5 h-3.5" />} label={`${pending.leave} đơn nghỉ phép`} to="/admin/leave" navigate={navigate} />}
-                  {pending.shifts > 0 && <PendingChip icon={<Clock className="w-3.5 h-3.5" />} label={`${pending.shifts} đăng ký ca`} to="/admin/shifts" navigate={navigate} />}
                 </div>
               )}
               {risks.length === 0 && pendingTotal === 0 ? (

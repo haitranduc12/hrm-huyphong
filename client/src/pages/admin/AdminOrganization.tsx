@@ -13,7 +13,6 @@ import { Input, Select } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Avatar } from '@/components/ui/Avatar';
-import { WorkflowStrip } from '@/components/WorkflowStrip';
 import { OrgChart } from '@/components/org/OrgChart';
 import { PositionChart } from '@/components/org/PositionChart';
 import { PermissionFunctionList } from '@/components/PermissionFunctionList';
@@ -561,8 +560,6 @@ export function AdminOrganization() {
 
   return (
     <div className="space-y-5">
-      <WorkflowStrip title="Nền dữ liệu nhân sự P0" steps={['Cơ cấu', 'Vị trí', 'Gán nhân sự', 'Luồng phê duyệt']} activeStep={tab === 'units' ? 0 : tab === 'positions' ? 1 : 2} />
-
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           { label: 'Đơn vị tổ chức', value: units.length, icon: Network, color: 'text-indigo-600 bg-indigo-50' },

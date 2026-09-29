@@ -183,9 +183,6 @@ function AppRoutes() {
       <Route path="/admin/payroll/adjustments" element={admin('attendance', <AdminPayroll section="adjustments" />, { functionCode: 'admin.payroll_adjustments' })} />
       <Route path="/admin/payroll/components" element={admin('attendance', <AdminPayroll section="catalog" />, { functionCode: 'admin.payroll_components' })} />
       <Route path="/admin/payroll/params" element={admin('attendance', <AdminPayroll section="params" />, { functionCode: 'admin.payroll_settings' })} />
-      {/* Ca cá nhân đã ngừng dùng vì công ty áp dụng giờ cố định; giữ URL cũ
-          dưới dạng chuyển hướng để dấu trang và thông báo cũ không bị hỏng. */}
-      <Route path="/admin/shifts" element={<Navigate to="/admin/attendance-settings" replace />} />
       <Route path="/admin/leave" element={admin('leave', <AdminLeave />)} />
       <Route path="/admin/training" element={admin('training', <AdminTraining />)} />
       <Route path="/admin/recruitment" element={adminAny(['users', 'projects'], <AdminRecruitment />)} />
@@ -207,7 +204,6 @@ function AppRoutes() {
       <Route path="/staff/projects" element={staff(<StaffProjects />)} />
       <Route path="/staff/kanban" element={staff(<StaffKanban />)} />
       <Route path="/staff/attendance" element={staff(<StaffAttendance />)} />
-      <Route path="/staff/shifts" element={<Navigate to="/staff/attendance" replace />} />
       <Route path="/staff/leave" element={staff(<StaffLeave />)} />
       <Route path="/staff/worklog" element={staff(<StaffWorklog />)} />
       <Route path="/staff/reports" element={staff(<StaffReports />)} />

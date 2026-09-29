@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, AlertCircle, TrendingUp, Clock, Fingerprint, CalendarDays, ArrowRight, ClipboardList } from 'lucide-react';
+import { Briefcase, AlertCircle, TrendingUp, Clock, Fingerprint, ArrowRight, ClipboardList } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -223,12 +223,6 @@ const mList = (memberships || []) as { project_id: string }[];
           icon={<Fingerprint className="h-5 w-5" />}
           title="Chấm công"
           desc="Check-in / Check-out hôm nay"
-        />
-        <QuickAction
-          to="/staff/shifts"
-          icon={<CalendarDays className="h-5 w-5" />}
-          title="Đăng ký ca"
-          desc="Đăng ký ca làm việc mới"
         />
       </div>
 

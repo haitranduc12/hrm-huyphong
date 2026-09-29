@@ -19,7 +19,6 @@ import { describeDbError } from '@/lib/dbError';
 import { isTeamlead } from '@/lib/permissions';
 import { PROJECT_STATUS_CONFIG, formatDate, formatVND, getTodayString } from '@/lib/utils';
 import type { Project, Profile, ProjectStatus } from '@/types';
-import { WorkflowStrip } from '@/components/WorkflowStrip';
 
 export function AdminProjects() {
   const { profile } = useAuth();
@@ -182,11 +181,6 @@ export function AdminProjects() {
 
   return (
     <div className="space-y-5">
-      <WorkflowStrip
-        title="Luồng quản lý dự án"
-        steps={['Khởi tạo dự án', 'Gán trưởng nhóm', 'Phân công tác vụ', 'Theo dõi tiến độ', 'Nghiệm thu & lưu trữ']}
-        activeStep={projects.length === 0 ? 0 : 2}
-      />
       {/* Trên điện thoại, ô tìm và nút đứng cùng hàng khiến nút xuống dòng rồi
           đè lên ô tìm. Xếp chồng dưới sm, cùng hàng từ sm trở lên. */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

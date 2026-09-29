@@ -149,17 +149,17 @@ export function StaffLeave() {
       return;
     }
 
-    // Cho phép nhân viên vẫn gửi yêu cầu, nhưng làm rõ các lịch cần quản lý xử
-    // lý trước khi duyệt. Trigger database sẽ không cho phê duyệt khi xung đột
-    // còn tồn tại, tránh ca/ngày công và nghỉ cùng có hiệu lực.
-    const [{ count: shiftConflicts }, { count: attendanceConflicts }] = await Promise.all([
-      supabase.from('shifts').select('id', { count: 'exact', head: true }).eq('user_id', profile?.id).eq('status', 'approved').lte('start_date', form.end_date).gte('end_date', form.start_date),
-      supabase.from('attendance').select('id', { count: 'exact', head: true }).eq('user_id', profile?.id).gte('date', form.start_date).lte('date', form.end_date),
-    ]);
-    if ((shiftConflicts ?? 0) > 0 || (attendanceConflicts ?? 0) > 0) {
+    // Giờ làm cố định nên chỉ cần cảnh báo ngày đã có dữ liệu chấm công.
+    const { count: attendanceConflicts } = await supabase
+      .from('attendance')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', profile?.id)
+      .gte('date', form.start_date)
+      .lte('date', form.end_date);
+    if ((attendanceConflicts ?? 0) > 0) {
       const ok = await confirm({
-        title: 'Khoảng nghỉ đang có lịch liên quan',
-        message: `Phát hiện ${shiftConflicts ?? 0} ca đã duyệt và ${attendanceConflicts ?? 0} ngày đã chấm công. Bạn vẫn có thể gửi đơn, nhưng quản lý phải xử lý các lịch này trước khi duyệt nghỉ.`,
+        title: 'Khoảng nghỉ đã có dữ liệu chấm công',
+        message: `Phát hiện ${attendanceConflicts ?? 0} ngày đã chấm công. Bạn vẫn có thể gửi đơn, nhưng quản lý phải xử lý dữ liệu ngày công trước khi duyệt nghỉ.`,
         confirmLabel: 'Vẫn gửi đơn',
       });
       if (!ok) { setSubmitting(false); return; }

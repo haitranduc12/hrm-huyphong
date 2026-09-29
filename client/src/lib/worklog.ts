@@ -4,6 +4,7 @@
 
 import { supabase } from './supabase';
 import { describeDbError, describeDbErrorOrNull } from '@/lib/dbError';
+import { toDateString } from './utils';
 import type { Attendance, Task, TaskWorklog } from '@/types';
 
 /** Giờ làm chuẩn một ngày — dùng làm mốc so sánh khi không có dữ liệu chấm công. */
@@ -11,6 +12,30 @@ export const STANDARD_DAY_HOURS = 8;
 
 /** Chênh lệch dưới ngưỡng này thì coi như khớp, không cảnh báo. */
 export const UNLOGGED_TOLERANCE_HOURS = 0.5;
+
+/** Tiện ích tuần dùng cho nhật ký giờ; không liên quan đến ca làm cá nhân. */
+export function startOfWeek(date: Date): Date {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  const weekday = d.getDay();
+  d.setDate(d.getDate() + (weekday === 0 ? -6 : 1 - weekday));
+  return d;
+}
+
+export function addDays(date: Date, days: number): Date {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+export function weekDays(date: Date): { date: Date; key: string; label: string; weekdayLabel: string }[] {
+  const monday = startOfWeek(date);
+  const names = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+  return names.map((weekdayLabel, index) => {
+    const day = addDays(monday, index);
+    return { date: day, key: toDateString(day), label: day.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }), weekdayLabel };
+  });
+}
 
 export interface WorklogEntry {
   task: Task;

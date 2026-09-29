@@ -18,7 +18,6 @@ import { LEAVE_TYPE_CONFIG, leaveStatusLabel } from '@/lib/leave';
 import { notifyUser } from '@/lib/assignments';
 import { LeaveQuotaPanel } from '@/components/LeaveQuotaPanel';
 import { formatDate } from '@/lib/utils';
-import { WorkflowStrip } from '@/components/WorkflowStrip';
 import type { LeaveCancellationRequest, LeaveRequest, LeaveStatus } from '@/types';
 
 export function AdminLeave() {
@@ -184,11 +183,6 @@ export function AdminLeave() {
 
   return (
     <div className="space-y-5">
-      <WorkflowStrip
-        title="Luồng nghỉ phép"
-        steps={['Nhân viên gửi đơn', 'Kiểm tra lịch & quỹ phép', 'Quản lý xử lý', 'Cập nhật lịch công']}
-        activeStep={filter === 'pending' ? 2 : 3}
-      />
       {/* Hai mảng việc của quyền `leave`: duyệt đơn, và đặt hạn mức phép năm. */}
       <div className="flex gap-1 p-1 bg-slate-100 rounded-xl w-fit">
         {([

@@ -20,8 +20,6 @@ const QUYEN_THEO_BANG: Record<string, string> = {
   profiles: 'Quản lý User',
   attendance: 'Chấm công',
   daily_assignments: 'Chấm công',
-  shifts: 'Ca làm việc',
-  shift_types: 'Ca làm việc',
   leave_requests: 'Nghỉ phép',
   annual_leave_quota: 'Nghỉ phép',
 };

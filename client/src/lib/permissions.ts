@@ -11,7 +11,7 @@
 
 import type { Profile } from '@/types';
 
-export const ADMIN_PERMISSIONS = ['users', 'projects', 'reports', 'attendance', 'shifts', 'leave', 'training', 'settings'] as const;
+export const ADMIN_PERMISSIONS = ['users', 'projects', 'reports', 'attendance', 'leave', 'training', 'settings'] as const;
 
 export type AdminPermission = (typeof ADMIN_PERMISSIONS)[number];
 
@@ -46,7 +46,6 @@ export const PERMISSION_LABELS: Record<AdminPermission, { label: string; desc: s
   projects:   { label: 'Quản lý Dự án',   desc: 'Tạo/sửa/xóa dự án, tác vụ và thành viên' },
   reports:    { label: 'Báo cáo',         desc: 'Xem báo cáo tổng hợp toàn công ty' },
   attendance: { label: 'Chấm công',       desc: 'Quản lý máy chấm công, bảng công và giờ làm chuẩn' },
-  shifts:     { label: 'Ca làm việc',     desc: 'Xem và duyệt đơn đăng ký ca' },
   leave:      { label: 'Nghỉ phép',       desc: 'Xem và duyệt đơn nghỉ phép, đặt hạn mức phép năm' },
   training:   { label: 'Đào tạo',         desc: 'Quản lý khóa học và tiến độ đào tạo nhân viên' },
   settings:   { label: 'Cấu hình',        desc: 'Thay đổi cấu hình hệ thống' },
@@ -88,7 +87,6 @@ export const PERMISSION_FUNCTIONS: Record<AdminPermission, { label: string; admi
     { label: 'Khóa/mở kỳ bảng công', functionCode: 'admin.timesheet_lock' },
     { label: 'Bảng lương', functionCode: 'admin.payroll' },
   ],
-  shifts: [{ label: 'Lịch và ca làm việc' }],
   leave: [{ label: 'Nghỉ phép và hạn mức phép năm' }],
   training: [{ label: 'Đào tạo, khóa học và tiến độ' }],
   settings: [

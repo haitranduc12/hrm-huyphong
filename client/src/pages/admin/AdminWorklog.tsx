@@ -9,8 +9,7 @@ import { ErrorState } from '@/components/ui/ErrorState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { supabase } from '@/lib/supabase';
 import { useRealtimeSync } from '@/hooks/useRealtimeSync';
-import { addDays, startOfWeek, weekDays } from '@/lib/shifts';
-import { UNLOGGED_TOLERANCE_HOURS, attendanceHours, formatHours } from '@/lib/worklog';
+import { addDays, startOfWeek, weekDays, UNLOGGED_TOLERANCE_HOURS, attendanceHours, formatHours } from '@/lib/worklog';
 import { toDateString } from '@/lib/utils';
 import type { Attendance, Profile } from '@/types';
 

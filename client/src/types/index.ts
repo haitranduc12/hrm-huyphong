@@ -5,8 +5,6 @@ export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
 /** Mã role dự án do dữ liệu cấu hình; không đóng union để có thể mở rộng. */
 export type MemberRole = string;
 export type AttendanceStatus = 'active' | 'completed';
-export type ShiftType = 'morning' | 'afternoon' | 'night' | 'full';
-export type ShiftStatus = 'pending' | 'approved' | 'rejected';
 export type DocumentType = 'brd' | 'srs' | 'contract' | 'quotation' | 'minutes' | 'design' | 'report' | 'other';
 export type LeaveType = 'annual' | 'sick' | 'unpaid' | 'other';
 export type LeaveStatus = 'pending' | 'approved' | 'rejected';
@@ -648,38 +646,6 @@ export interface LeaveCancellationRequest {
   review_note: string | null;
   created_at: string;
   leave?: LeaveRequest;
-}
-
-export interface Shift {
-  id: string;
-  user_id: string;
-  start_date: string;
-  end_date: string;
-  shift_type: ShiftType;
-  status: ShiftStatus;
-  approved_by: string | null;
-  reason_reject: string | null;
-  /** NULL = nhân viên tự đăng ký. Có giá trị = quản lý xếp trực tiếp. */
-  assigned_by: string | null;
-  created_at: string;
-  profile?: Profile;
-}
-
-/**
- * Loại ca kèm giờ cụ thể, đọc từ bảng `shift_types`.
- * Trước đây chỉ là nhãn viết cứng trong utils.ts nên không tính được giờ công.
- */
-export interface ShiftTypeConfig {
-  code: string;
-  label: string;
-  /** Dạng HH:MM:SS từ Postgres. */
-  start_time: string;
-  end_time: string;
-  hours: number;
-  color: string;
-  dot: string;
-  sort_order: number;
-  is_active: boolean;
 }
 
 /**

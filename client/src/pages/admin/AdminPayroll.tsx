@@ -27,7 +27,6 @@ import { Modal } from '@/components/ui/Modal';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { MonthNav } from '@/components/ui/MonthNav';
 import { TableSkeleton } from '@/components/ui/Skeleton';
-import { WorkflowStrip } from '@/components/WorkflowStrip';
 import { PaySchemeModal } from '@/components/payroll/PaySchemeModal';
 import { ComponentCatalog } from '@/components/payroll/ComponentCatalog';
 import { PayslipBreakdown } from '@/components/payroll/PayslipBreakdown';
@@ -613,14 +612,6 @@ export function AdminPayroll({ section = 'register' }: { section?: Tab } = {}) {
 
   return (
     <div className="space-y-5">
-      {tab === 'register' && (
-        <WorkflowStrip
-          title="Luồng bảng lương"
-          steps={['Thiết lập cơ chế lương', 'Nhập số liệu tháng', 'Tính lương', 'Duyệt và chi trả']}
-          activeStep={runStatus === 'PAID' ? 3 : runStatus === 'APPROVED' ? 3 : runStatus === 'CALCULATED' ? 2 : 0}
-        />
-      )}
-
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-slate-800">

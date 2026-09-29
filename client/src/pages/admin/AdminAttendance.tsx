@@ -17,7 +17,6 @@ import { supabase } from '@/lib/supabase';
 import { describeDbError } from '@/lib/dbError';
 import { formatTime, formatDateTime, getTodayString } from '@/lib/utils';
 import { notifyUser } from '@/lib/assignments';
-import { WorkflowStrip } from '@/components/WorkflowStrip';
 import type { Attendance, Profile } from '@/types';
 
 export function AdminAttendance() {
@@ -217,11 +216,6 @@ export function AdminAttendance() {
 
   return (
     <div className="space-y-5">
-      <WorkflowStrip
-        title="Luồng ngày công"
-        steps={['Check-in', 'Hoàn thành việc', 'Check-out', 'Quản lý duyệt', 'Đưa vào bảng lương']}
-        activeStep={filter === 'pending' ? 3 : 2}
-      />
       {canConfigureAttendance && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5">
           <p className="text-xs text-slate-500">

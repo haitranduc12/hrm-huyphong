@@ -1,4 +1,4 @@
-import { type TaskStatus, type TaskPriority, type ProjectStatus, type ShiftType, type ShiftStatus, type MemberRole } from '@/types';
+import { type TaskStatus, type TaskPriority, type ProjectStatus, type MemberRole } from '@/types';
 
 export const TASK_STATUSES: { value: TaskStatus; label: string; color: string }[] = [
   { value: 'todo', label: 'Cần làm', color: 'bg-slate-100 text-slate-700' },
@@ -27,19 +27,6 @@ export const PROJECT_STATUS_CONFIG: Record<ProjectStatus, { label: string; color
   on_hold: { label: 'Tạm dừng', color: 'bg-amber-100 text-amber-700' },
   completed: { label: 'Hoàn thành', color: 'bg-emerald-100 text-emerald-700' },
   archived: { label: 'Lưu trữ', color: 'bg-slate-200 text-slate-500' },
-};
-
-export const SHIFT_TYPE_CONFIG: Record<ShiftType, { label: string; color: string; dot: string }> = {
-  morning: { label: 'Ca sáng', color: 'bg-orange-100 text-orange-700', dot: 'bg-orange-400' },
-  afternoon: { label: 'Ca chiều', color: 'bg-blue-100 text-blue-700', dot: 'bg-blue-400' },
-  night: { label: 'Ca tối', color: 'bg-violet-100 text-violet-700', dot: 'bg-violet-400' },
-  full: { label: 'Cả ngày', color: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-400' },
-};
-
-export const SHIFT_STATUS_CONFIG: Record<ShiftStatus, { label: string; color: string }> = {
-  pending: { label: 'Chờ duyệt', color: 'bg-amber-100 text-amber-700' },
-  approved: { label: 'Đã duyệt', color: 'bg-emerald-100 text-emerald-700' },
-  rejected: { label: 'Từ chối', color: 'bg-red-100 text-red-700' },
 };
 
 export const MEMBER_ROLE_CONFIG: Record<string, { label: string; color: string }> = {
