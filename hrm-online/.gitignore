@@ -10,6 +10,7 @@ build/
 # Environment variables
 .env
 .env.local
+.env.attendance-bridge
 .env.development.local
 .env.test.local
 .env.production.local
@@ -113,3 +114,6 @@ client/public/__manus__/version.json
 .project-config.json
 
 .vercel
+.claude/
+client/public/__manus__/
+patches/

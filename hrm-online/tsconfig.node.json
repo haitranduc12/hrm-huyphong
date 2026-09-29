@@ -17,5 +17,8 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["vite.config.ts"]
+  // `api/` là Vercel Function chạy trên Node, cùng môi trường với vite.config.
+  // Đưa vào đây để `npm run build` bắt lỗi kiểu ngay trên máy — trước đó thư
+  // mục này không nằm trong tsconfig nào, nên lỗi chỉ lộ ra lúc Vercel build.
+  "include": ["vite.config.ts", "api/**/*.ts"]
 }

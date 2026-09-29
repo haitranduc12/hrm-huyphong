@@ -41,6 +41,9 @@ importers:
       xlsx:
         specifier: ^0.18.5
         version: 0.18.5
+      zkteco-protocol:
+        specifier: ^0.6.1
+        version: 0.6.1
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.3.3
@@ -1116,6 +1119,11 @@ packages:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
 
+  zkteco-protocol@0.6.1:
+    resolution: {integrity: sha512-CVivONnOHVacqS6vW3SaQVB4smsRFCGXb/xmXdXG/jjrpfTJ1wejWHJf7fBNVydL/n9Omi+ZPd5ptMgD2xK9yw==}
+    engines: {node: '>=20.19'}
+    hasBin: true
+
 snapshots:
 
   '@dnd-kit/accessibility@3.1.1(react@19.2.8)':
@@ -1908,3 +1916,5 @@ snapshots:
       word: 0.3.0
 
   xtend@4.0.2: {}
+
+  zkteco-protocol@0.6.1: {}
