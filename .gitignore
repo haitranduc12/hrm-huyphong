@@ -115,3 +115,5 @@ client/public/__manus__/version.json
 
 .vercel
 .claude/
+client/public/__manus__/
+patches/
