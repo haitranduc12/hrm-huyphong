@@ -1,0 +1,523 @@
+/* Font được nạp bằng <link preconnect/preload> trong index.html — nhanh hơn
+   @import ở đây, vì @import bắt trình duyệt phải tải xong CSS này rồi mới biết
+   đường đi lấy font. */
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+
+  /* Shared indigo/slate palette from the personnel template */
+  --color-admin-primary: #4F46E5;
+  --color-admin-primary-hover: #4338CA;
+  --color-admin-bg: #F8FAFC;
+  --color-admin-sidebar: #0F172A;
+  --color-admin-text: #1E293B;
+  --color-admin-muted: #64748B;
+  --color-content-surface: #F8FAFC;
+
+  /* Staff palette */
+  --color-staff-primary: #4F46E5;
+  --color-staff-primary-hover: #4338CA;
+  --color-staff-bg: #F8FAFC;
+  --color-staff-sidebar: #0F172A;
+  --color-staff-text: #0F172A;
+  --color-staff-muted: #64748B;
+  --color-staff-active-bg: #4F46E5;
+  --color-staff-active-text: #FFFFFF;
+
+  /* Semantic */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #3B82F6;
+
+  /* Custom shadows - Subtle & Professional */
+  --shadow-soft: 0 1px 2px 0 rgb(10 10 11 / 0.02);
+  --shadow-card: 0 1px 3px 0 rgb(10 10 11 / 0.04), 0 2px 8px -2px rgb(10 10 11 / 0.02);
+  --shadow-lifted: 0 10px 20px -5px rgb(10 10 11 / 0.05), 0 4px 6px -2px rgb(10 10 11 / 0.02);
+  --shadow-glow-blue: 0 8px 24px -6px rgb(217 119 6 / 0.4); /* Copper Glow */
+  --shadow-glow-emerald: 0 8px 24px -6px rgb(16 185 129 / 0.4);
+}
+
+html {
+  font-family: 'Inter', system-ui, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ===== Application shell ===== */
+.app-sidebar {
+  background-image:
+    radial-gradient(420px 260px at 15% -5%, rgb(99 102 241 / 0.22), transparent 62%),
+    linear-gradient(180deg, #0f172a 0%, #0b1220 100%);
+  box-shadow: 18px 0 50px -42px rgb(15 23 42 / 0.9);
+}
+
+.app-header {
+  box-shadow: 0 8px 30px -28px rgb(15 23 42 / 0.55);
+}
+
+.page-content h2 {
+  letter-spacing: -0.02em;
+}
+
+.page-content table th {
+  letter-spacing: 0.035em;
+}
+
+.page-content table tbody tr {
+  transition: background-color 160ms ease;
+}
+
+.page-content table tbody tr:hover {
+  background-color: rgb(248 250 252 / 0.85);
+}
+
+/* Giữ thanh thao tác/filter có thể cuộn ngang nhưng không lộ scrollbar thô. */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; }
+
+/* ===== Animations ===== */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.5); }
+  70% { box-shadow: 0 0 0 20px rgba(5, 150, 105, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+}
+.pulse-ring { animation: pulse-ring 2s infinite; }
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e9eef5 50%, #f1f5f9 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.slide-in-right { animation: slide-in-right 0.3s ease-out; }
+
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+.fade-out { animation: fade-out 0.2s ease-out forwards; }
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-in { animation: modal-in 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes page-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.page-fade-in { animation: page-fade-in 0.25s ease-out; }
+
+/* ===== Premium auth & UI animations ===== */
+@keyframes float-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+.animate-blob { animation: float-blob 12s ease-in-out infinite; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.4s ease-out both; }
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient { background-size: 200% 200%; animation: gradient-shift 15s ease infinite; }
+
+@keyframes shimmer-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+/* Vệt sáng chỉ chạy khi rê chuột.
+   Trước đây nó lặp vô hạn trên MỌI nút chính, kể cả khi người dùng đang đọc
+   hoặc điền form — chuyển động không ngừng ở rìa tầm nhìn gây phân tán, và
+   giữ GPU hoạt động liên tục làm hao pin trên máy xách tay. */
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+  transform: translateX(-100%);
+  opacity: 0;
+}
+.btn-shine:hover::after,
+.btn-shine:focus-visible::after {
+  opacity: 1;
+  animation: shimmer-slide 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes check-pop {
+  0% { transform: scale(0); }
+  80% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.check-pop { animation: check-pop 0.3s ease-out; }
+
+@keyframes particle-rise {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.3; }
+  100% { transform: translateY(-120vh) translateX(30px); opacity: 0; }
+}
+.particle {
+  position: absolute; bottom: -10px; border-radius: 9999px;
+  background: rgba(255,255,255,0.15);
+  animation: particle-rise linear infinite;
+}
+
+/* ===== Glassmorphism ===== */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.glass-dark {
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.glass-nav {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* ===== Gradient text ===== */
+.text-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-gradient-emerald {
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ===== Gradient backgrounds ===== */
+.bg-gradient-admin {
+  background: #0f172a;
+}
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ===== Card lift & glow ===== */
+.card-lift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lifted);
+}
+
+/* ===== Hover underline nav ===== */
+.nav-hover {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+/* ===== Table row ===== */
+.table-row-hover {
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.table-row-hover:hover { background-color: #f8fafc; }
+
+/* ===========================================================================
+   Điều hướng bàn phím
+   ---------------------------------------------------------------------------
+   Toàn app dùng `focus:outline-none` để bỏ viền focus mặc định của trình duyệt,
+   nhưng ô nhập liệu thì được thay bằng ring, còn NÚT và LIÊN KẾT thì không —
+   nghĩa là người dùng bàn phím hoàn toàn không biết mình đang ở đâu.
+
+   `:focus-visible` chỉ kích hoạt khi điều hướng bằng bàn phím, nên bấm chuột
+   vẫn sạch sẽ như cũ.
+   =========================================================================== */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[role='button']:focus-visible,
+[tabindex]:not([tabindex='-1']):focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+/* Nút trên nền tối (sidebar admin, cột trái trang đăng nhập) cần viền sáng. */
+.bg-gradient-admin a:focus-visible,
+.bg-gradient-admin button:focus-visible {
+  outline-color: #fff;
+}
+
+/* Bỏ qua nội dung lặp lại — chuẩn của mọi trang có sidebar. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.625rem 1rem;
+  border-radius: 0.75rem;
+  background: #1e293b;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 1rem; }
+
+/* ===========================================================================
+   DESKTOP — bảng dài
+   ---------------------------------------------------------------------------
+   Danh sách người dùng hay chấm công dài vài chục dòng thì tiêu đề cột trôi
+   mất khi cuộn, người xem không còn biết cột nào là cột nào. Ghim tiêu đề lại.
+   Chỉ áp dụng từ md trở lên — dưới đó bảng đã chuyển thành thẻ, không có tiêu đề.
+   =========================================================================== */
+@media (min-width: 768px) {
+  .table-cards thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #f8fafc;
+    box-shadow: inset 0 -1px 0 #e2e8f0;
+  }
+}
+
+/* ===========================================================================
+   MOBILE
+   =========================================================================== */
+
+/* iOS Safari TỰ PHÓNG TO cả trang khi người dùng chạm vào ô nhập có
+   font-size dưới 16px. Toàn bộ input của app đang là 14px (text-sm), nên mỗi
+   lần gõ là màn hình nhảy một cái rồi phải tự chụm tay thu lại.
+   16px là ngưỡng duy nhất chặn được hành vi này. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Vùng chạm tối thiểu 44×44px trên thiết bị cảm ứng (khuyến nghị của Apple
+   HIG và WCAG 2.5.5). Nút chỉ chứa icon hiện có chỗ nhỏ tới 20×20 — ngón tay
+   không bấm trúng.
+   `pointer: coarse` = ngón tay; chuột vẫn giữ nguyên kích thước gọn như cũ. */
+@media (pointer: coarse) {
+  button:has(> svg:only-child),
+  button:has(> span:only-child > svg:only-child),
+  a:has(> svg:only-child) {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Bỏ ô sáng xanh khi chạm — trông cũ và không ăn nhập với thiết kế. */
+button,
+a,
+[role='button'] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Chừa chỗ cho thanh home của iPhone và tai thỏ. */
+.safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+.safe-top {
+  padding-top: max(0px, env(safe-area-inset-top));
+}
+
+/* Bảng cuộn ngang trên điện thoại rất khó dùng: người dùng không biết còn cột
+   bị khuất. Lớp này biến bảng thành danh sách thẻ dọc dưới 768px — mỗi ô lấy
+   nhãn cột từ thuộc tính data-label. */
+@media (max-width: 767px) {
+  .table-cards thead {
+    display: none;
+  }
+  .table-cards,
+  .table-cards tbody,
+  .table-cards tr,
+  .table-cards td {
+    display: block;
+    width: 100%;
+  }
+  .table-cards tr {
+    border: 1px solid var(--color-slate-200, #e2e8f0);
+    border-radius: 1rem;
+    padding: 0.25rem 0;
+    margin-bottom: 0.75rem;
+    background: #fff;
+  }
+  .table-cards td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.625rem 1rem;
+  }
+  .table-cards td::before {
+    content: attr(data-label);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    flex-shrink: 0;
+  }
+  /* Ô đầu (thông tin chính) và ô thao tác không cần nhãn. */
+  .table-cards td[data-label='']::before {
+    display: none;
+  }
+  .table-cards td[data-label=''] {
+    justify-content: flex-start;
+  }
+}
+
+/* ===========================================================================
+   Tôn trọng prefers-reduced-motion
+   ---------------------------------------------------------------------------
+   App có 8 hiệu ứng chạy vô hạn (blob trôi, gradient dịch, hạt bay, vệt sáng,
+   vòng nhịp, shimmer skeleton). Với người mắc rối loạn tiền đình, chuyển động
+   liên tục gây chóng mặt và buồn nôn thật sự — đây là yêu cầu bắt buộc của
+   WCAG 2.3.3, không phải tùy chọn thẩm mỹ.
+
+   Người dùng bật "Giảm chuyển động" trong cài đặt hệ điều hành sẽ thấy giao
+   diện tĩnh hoàn toàn, nhưng vẫn đầy đủ chức năng.
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Các hiệu ứng thuần trang trí thì ẩn hẳn thay vì để chúng đứng yên lệch chỗ. */
+  .particle,
+  .animate-blob {
+    display: none !important;
+  }
+
+  .btn-shine::after {
+    display: none !important;
+  }
+
+  .card-lift:hover {
+    transform: none;
+  }
+
+  /* Skeleton giữ nền tĩnh, bỏ vệt chạy. */
+  .skeleton {
+    animation: none !important;
+    background: #eef2f7;
+  }
+}
+
+/* ============================================================================
+   IN ẤN — Ctrl/⌘+P trên Bảng công, Bảng lương, Báo cáo ra giấy sạch sẽ:
+   bỏ khung điều hướng và mọi nút bấm, bảng chiếm trọn trang nền trắng.
+   ============================================================================ */
+@media print {
+  aside,
+  header,
+  nav,
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  main {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  /* Bỏ cuộn ngang + cột dính để bảng in đủ chiều rộng giấy. */
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+  .sticky {
+    position: static !important;
+  }
+
+  table {
+    font-size: 11px;
+  }
+}
+
+/* ============================================================================
+   NỀN CÓ CHIỀU SÂU — hai vệt sáng radial (chàm góc phải trên, ngọc lục bảo
+   góc trái) thay cho slate-50 phẳng. Cường độ 6-7% đủ cảm nhận được chiều sâu
+   mà không tranh chấp với nội dung.
+   ============================================================================ */
+.bg-ambient {
+  background-color: #f8fafc;
+  background-image:
+    radial-gradient(1100px 520px at 88% -12%, rgb(99 102 241 / 0.07), transparent 62%),
+    radial-gradient(900px 460px at -8% 18%, rgb(16 185 129 / 0.06), transparent 58%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgb(59 130 246 / 0.22);
+}

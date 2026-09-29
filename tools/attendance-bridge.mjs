@@ -1,0 +1,153 @@
+#!/usr/bin/env node
+
+import { createHash } from 'node:crypto';
+import { createClient } from '@supabase/supabase-js';
+import { ZkDevice } from 'zkteco-protocol';
+
+function required(name, fallback) {
+  const value = process.env[name] || fallback;
+  if (!value) throw new Error(`Thiếu biến môi trường ${name}.`);
+  return value;
+}
+
+function integer(name, fallback) {
+  const value = Number(process.env[name] ?? fallback);
+  if (!Number.isInteger(value)) throw new Error(`${name} phải là số nguyên.`);
+  return value;
+}
+
+function codeSet(name, fallback) {
+  return new Set((process.env[name] || fallback)
+    .split(',')
+    .map((value) => Number(value.trim()))
+    .filter(Number.isFinite));
+}
+
+const config = {
+  host: required('RJ_DEVICE_IP'),
+  port: integer('RJ_DEVICE_PORT', 4370),
+  transport: (process.env.RJ_TRANSPORT || 'tcp').toLowerCase(),
+  commKey: integer('RJ_COMM_KEY', 0),
+  timeoutMs: integer('RJ_TIMEOUT_MS', 10000),
+  utcOffset: process.env.RJ_UTC_OFFSET || '+07:00',
+  pollMinutes: integer('RJ_POLL_MINUTES', 5),
+  once: process.argv.includes('--once'),
+  supabaseUrl: required('SUPABASE_URL', process.env.VITE_SUPABASE_URL),
+  supabaseAnonKey: required('SUPABASE_ANON_KEY', process.env.VITE_SUPABASE_ANON_KEY),
+  bridgeToken: required('ATTENDANCE_BRIDGE_TOKEN'),
+  inCodes: codeSet('RJ_IN_STATUS_CODES', '0,2,4'),
+  outCodes: codeSet('RJ_OUT_STATUS_CODES', '1,3,5'),
+};
+
+if (!['tcp', 'udp'].includes(config.transport)) throw new Error('RJ_TRANSPORT chỉ nhận tcp hoặc udp.');
+if (!/^[+-](0\d|1\d|2[0-3]):[0-5]\d$/.test(config.utcOffset)) {
+  throw new Error('RJ_UTC_OFFSET phải có dạng +07:00.');
+}
+if (config.pollMinutes < 1) throw new Error('RJ_POLL_MINUTES phải từ 1 trở lên.');
+
+const supabase = createClient(config.supabaseUrl, config.supabaseAnonKey, {
+  auth: { persistSession: false, autoRefreshToken: false },
+});
+
+function sha256(value) {
+  return createHash('sha256').update(value).digest('hex');
+}
+
+function toEvent(log) {
+  if (!log.userId) return null;
+  const local = log.timestamp?.local;
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(local || '')) return null;
+  const punchedAt = `${local}${config.utcOffset}`;
+  const direction = config.outCodes.has(log.status)
+    ? 'OUT'
+    : config.inCodes.has(log.status)
+      ? 'IN'
+      : 'AUTO';
+  const identity = [log.userId, local, log.status, log.verifyMode, log.raw].join('|');
+  return {
+    external_id: sha256(identity),
+    device_user_id: String(log.userId).trim(),
+    punched_at: punchedAt,
+    punch_type: direction,
+    verify_mode: String(log.verifyMode),
+    raw_payload: {
+      uid: log.uid,
+      status: log.status,
+      verify_mode: log.verifyMode,
+      record_size: log.recordSize,
+      user_id_source: log.userIdSource,
+      raw: log.raw,
+    },
+  };
+}
+
+async function push(events) {
+  let inserted = 0;
+  let processed = 0;
+  let unmapped = 0;
+  for (let offset = 0; offset < events.length; offset += 500) {
+    const batch = events.slice(offset, offset + 500);
+    const { data, error } = await supabase.rpc('ingest_attendance_device_events', {
+      bridge_token: config.bridgeToken,
+      events: batch,
+    });
+    if (error) throw new Error(`Supabase từ chối đồng bộ: ${error.message}`);
+    inserted += Number(data?.inserted || 0);
+    processed += Number(data?.processed || 0);
+    unmapped += Number(data?.unmapped || 0);
+  }
+  return { inserted, processed, unmapped };
+}
+
+async function syncOnce() {
+  const started = new Date();
+  const device = new ZkDevice({
+    host: config.host,
+    port: config.port,
+    transport: config.transport,
+    commKey: config.commKey,
+    timeoutMs: config.timeoutMs,
+  });
+  try {
+    await device.connect();
+    // Giao thức thiết bị chỉ có một session/reply-id; đọc tuần tự để firmware
+    // cũ không trả nhầm response khi nhiều lệnh đi cùng lúc.
+    const identity = await device.getIdentity();
+    const info = await device.getInfo();
+    const logs = await device.getAttendanceLogs();
+    const events = logs.map(toEvent).filter(Boolean);
+    const skipped = logs.length - events.length;
+    const result = events.length ? await push(events) : { inserted: 0, processed: 0, unmapped: 0 };
+    console.log(JSON.stringify({
+      at: started.toISOString(),
+      device: identity.deviceName || config.host,
+      serialNumber: identity.serialNumber || undefined,
+      deviceRecords: info.recordCount,
+      read: logs.length,
+      skipped,
+      ...result,
+    }));
+  } finally {
+    await device.disconnect().catch(() => undefined);
+  }
+}
+
+let syncing = false;
+async function guardedSync() {
+  if (syncing) return;
+  syncing = true;
+  try {
+    await syncOnce();
+  } catch (error) {
+    console.error(`[${new Date().toISOString()}] Đồng bộ thất bại:`, error instanceof Error ? error.message : error);
+    if (config.once) process.exitCode = 1;
+  } finally {
+    syncing = false;
+  }
+}
+
+await guardedSync();
+if (!config.once) {
+  console.log(`Bridge đang chạy; đồng bộ mỗi ${config.pollMinutes} phút.`);
+  setInterval(guardedSync, config.pollMinutes * 60_000);
+}

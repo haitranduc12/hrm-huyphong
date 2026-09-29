@@ -1,0 +1,135 @@
+// ============================================================================
+// Hồ sơ cá nhân — nhân viên tự sửa thông tin của mình.
+// ----------------------------------------------------------------------------
+// Ghi thẳng vào `profiles` chứ không qua RPC: policy `profiles_update_own` đã
+// cho sửa đúng dòng của mình, còn trigger `prevent_self_privilege_change` chặn
+// mọi cột nhạy cảm (role, permissions, is_active, hạn mức phép,
+// must_change_password, email). Nghĩa là hàng rào nằm ở database — kể cả người
+// gọi thẳng PostgREST trong DevTools cũng không vượt được.
+//
+// Ảnh đại diện nằm ở bucket `avatars`, đường dẫn LUÔN là `<user_id>/<file>` vì
+// policy storage khoá quyền ghi theo đúng thư mục mang id của mình.
+// ============================================================================
+
+import { supabase } from './supabase';
+import { describeDbError } from './dbError';
+
+/** Khớp `file_size_limit` của bucket trong migration 20260811160000. */
+export const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
+
+/**
+ * Khớp `allowed_mime_types` của bucket. KHÔNG có image/svg+xml: SVG chạy được
+ * JavaScript trên domain của bạn.
+ */
+export const AVATAR_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+const AVATAR_BUCKET = 'avatars';
+
+export interface SelfProfileInput {
+  name: string;
+  phone: string;
+}
+
+/** Số điện thoại phải khớp CHECK `profiles_phone_format` phía database. */
+const PHONE_RE = /^[0-9+().\s-]{6,20}$/;
+
+export function validateSelfProfile({ name, phone }: SelfProfileInput): string | null {
+  if (!name.trim()) return 'Vui lòng nhập họ tên.';
+  if (name.trim().length > 100) return 'Họ tên quá dài (tối đa 100 ký tự).';
+  if (phone.trim() && !PHONE_RE.test(phone.trim())) {
+    return 'Số điện thoại chỉ gồm chữ số và các ký tự + ( ) . - khoảng trắng, dài 6–20 ký tự.';
+  }
+  return null;
+}
+
+export async function updateOwnProfile(
+  userId: string,
+  { name, phone }: SelfProfileInput,
+): Promise<{ error: string | null }> {
+  const invalid = validateSelfProfile({ name, phone });
+  if (invalid) return { error: invalid };
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ name: name.trim(), phone: phone.trim() || null })
+    .eq('id', userId);
+
+  return { error: error ? describeDbError(error) : null };
+}
+
+/**
+ * Tải ảnh đại diện rồi ghi URL vào hồ sơ.
+ *
+ * Tên file có kèm dấu thời gian: trình duyệt và CDN cache rất dai theo URL, ghi
+ * đè cùng một tên thì người dùng đổi ảnh xong vẫn thấy ảnh cũ. Ảnh cũ được xoá
+ * sau khi ảnh mới đã ghi xong.
+ */
+export async function uploadAvatar(
+  userId: string,
+  file: File,
+  currentUrl: string | null,
+): Promise<{ error: string | null; url?: string }> {
+  if (!AVATAR_MIME_TYPES.includes(file.type)) {
+    return { error: 'Chỉ nhận ảnh JPG, PNG, WEBP hoặc GIF.' };
+  }
+  if (file.size > AVATAR_MAX_BYTES) {
+    return { error: `Ảnh tối đa ${Math.round(AVATAR_MAX_BYTES / 1024 / 1024)} MB.` };
+  }
+
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+  const path = `${userId}/${Date.now()}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from(AVATAR_BUCKET)
+    .upload(path, file, { contentType: file.type, upsert: false });
+
+  if (uploadError) return { error: `Tải ảnh thất bại: ${uploadError.message}` };
+
+  const { data } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(path);
+  const url = data.publicUrl;
+
+  const { error: saveError } = await supabase
+    .from('profiles')
+    .update({ avatar_url: url })
+    .eq('id', userId);
+
+  if (saveError) {
+    // Hồ sơ không ghi được thì ảnh vừa tải thành rác — dọn ngay.
+    await supabase.storage.from(AVATAR_BUCKET).remove([path]);
+    return { error: describeDbError(saveError) };
+  }
+
+  await removeOldAvatar(currentUrl, userId);
+  return { error: null, url };
+}
+
+/** Gỡ ảnh đại diện, trả hồ sơ về dùng chữ cái đầu của tên. */
+export async function removeAvatar(
+  userId: string,
+  currentUrl: string | null,
+): Promise<{ error: string | null }> {
+  const { error } = await supabase.from('profiles').update({ avatar_url: null }).eq('id', userId);
+  if (error) return { error: describeDbError(error) };
+
+  await removeOldAvatar(currentUrl, userId);
+  return { error: null };
+}
+
+/**
+ * Xoá file ảnh cũ trong storage. Lỗi được nuốt có chủ ý: hồ sơ đã trỏ sang ảnh
+ * mới rồi, sót lại một file cũ không làm hỏng gì — báo lỗi ở đây chỉ khiến
+ * người dùng tưởng việc đổi ảnh thất bại.
+ */
+async function removeOldAvatar(currentUrl: string | null, userId: string): Promise<void> {
+  if (!currentUrl) return;
+
+  const marker = `/${AVATAR_BUCKET}/`;
+  const idx = currentUrl.indexOf(marker);
+  if (idx === -1) return;
+
+  const path = currentUrl.slice(idx + marker.length).split('?')[0];
+  // Chỉ đụng vào file trong thư mục của chính mình — phòng URL bị sửa tay.
+  if (!path.startsWith(`${userId}/`)) return;
+
+  await supabase.storage.from(AVATAR_BUCKET).remove([path]);
+}
